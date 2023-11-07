@@ -112,12 +112,13 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
     window.scrollTo({ top: top })
   }
 
-  let chain = titleCase(router.query.chain as string)
+  let chainName = collectionChain?.name
 
   let collectionQuery: Parameters<typeof useCollections>['0'] = {
     id,
     includeSalesCount: true,
     includeMintStages: true,
+    includeSecurityConfigs: true,
   }
 
   const { data: collections } = useCollections(collectionQuery, {
@@ -130,12 +131,17 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
     (stage) => stage.kind === 'public'
   )
 
+  const mintPriceDecimal = mintData?.price?.amount?.decimal
+  const mintCurrency = mintData?.price?.currency?.symbol?.toUpperCase()
+
   const mintPrice =
-    mintData?.price?.amount?.decimal === 0
-      ? 'Free'
-      : `${
-          mintData?.price?.amount?.decimal
-        } ${mintData?.price?.currency?.symbol?.toUpperCase()}`
+    typeof mintPriceDecimal === 'number' &&
+    mintPriceDecimal !== null &&
+    mintPriceDecimal !== undefined
+      ? mintPriceDecimal === 0
+        ? 'Free'
+        : `${mintPriceDecimal} ${mintCurrency}`
+      : undefined
 
   let tokenQuery: Parameters<typeof useDynamicTokens>['0'] = {
     limit: 20,
@@ -323,7 +329,12 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
       attributes?.length >= 2
   )
 
-  const contractKind = collection?.contractKind?.toUpperCase()
+  const hasSecurityConfig =
+    collection?.securityConfig &&
+    Object.values(collection.securityConfig).some(Boolean)
+  const contractKind = `${collection?.contractKind?.toUpperCase()}${
+    hasSecurityConfig ? 'C' : ''
+  }`
 
   useEffect(() => {
     const isVisible = !!loadMoreObserver?.isIntersecting
@@ -461,7 +472,7 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                         >
                           <FontAwesomeIcon size="xs" icon={faGlobe} />
                         </Flex>
-                        <Text style="body3">{chain}</Text>
+                        <Text style="body3">{chainName}</Text>
                       </Flex>
 
                       {mintData && (
@@ -526,7 +537,7 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                     />
                   ) : null}
                   {/* Collection Mint */}
-                  {mintData ? (
+                  {mintData && mintPrice ? (
                     <Mint
                       collectionId={collection.id}
                       openState={isMintRoute ? mintOpenState : undefined}
@@ -875,12 +886,12 @@ export const getServerSideProps: GetServerSideProps<{
   id: string | undefined
 }> = async ({ params, res }) => {
   const id = params?.contract?.toString()
-  const { reservoirBaseUrl, apiKey } =
+  const { reservoirBaseUrl } =
     supportedChains.find((chain) => params?.chain === chain.routePrefix) ||
     DefaultChain
   const headers: RequestInit = {
     headers: {
-      'x-api-key': apiKey || '',
+      'x-api-key': process.env.RESERVOIR_API_KEY || '',
     },
   }
 

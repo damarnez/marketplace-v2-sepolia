@@ -39,6 +39,7 @@ const IndexPage: NextPage<Props> = ({ ssr }) => {
   let collectionQuery: Parameters<typeof useCollections>['0'] = {
     limit: 20,
     sortBy: sortByTime,
+    includeMintStages: true,
   }
 
   const { chain, switchCurrentChain } = useContext(ChainContext)
@@ -195,7 +196,7 @@ export const getServerSideProps: GetServerSideProps<{
     query,
     {
       headers: {
-        'x-api-key': chain.apiKey || '',
+        'x-api-key': process.env.RESERVOIR_API_KEY || '',
       },
     }
   )

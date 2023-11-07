@@ -97,6 +97,8 @@ const IndexPage: NextPage<Props> = ({ assetId, ssr }) => {
 
   const { data: collections } = useCollections(
     {
+      includeSecurityConfigs: true,
+      includeMintStages: true,
       id: token?.token?.collection?.id,
     },
     {
@@ -109,6 +111,7 @@ const IndexPage: NextPage<Props> = ({ assetId, ssr }) => {
     is1155 ? account.address : undefined,
     {
       tokens: [`${contract}:${id}`],
+      limit: 20,
     }
   )
 
@@ -488,6 +491,7 @@ const IndexPage: NextPage<Props> = ({ assetId, ssr }) => {
               {isMounted && (
                 <TokenActions
                   token={token}
+                  collection={collection}
                   offer={offer}
                   listing={listing}
                   isOwner={isOwner}
@@ -610,7 +614,7 @@ export const getServerSideProps: GetServerSideProps<{
   const assetId = params?.assetId ? params.assetId.toString().split(':') : []
   let collectionId = assetId[0]
   const id = assetId[1]
-  const { reservoirBaseUrl, apiKey } =
+  const { reservoirBaseUrl } =
     supportedChains.find((chain) => params?.chain === chain.routePrefix) ||
     DefaultChain
 
@@ -618,7 +622,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const headers = {
     headers: {
-      'x-api-key': apiKey || '',
+      'x-api-key': process.env.RESERVOIR_API_KEY || '',
     },
   }
 

@@ -10,6 +10,7 @@ import { styled } from 'stitches.config'
 import optimizeImage from 'utils/optimizeImage'
 import titleCase from 'utils/titleCase'
 import { truncateAddress } from 'utils/truncate'
+import supportedChains, { DefaultChain } from 'utils/chains'
 
 const StyledImage = styled('img', {})
 
@@ -39,14 +40,28 @@ export const CollectionDetails: FC<Props> = ({
 }) => {
   const router = useRouter()
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
+  const [isOverflowed, setIsOverflowed] = useState(false)
+
   const chainCurrency = useChainCurrency()
 
   const descriptionRef = useRef(null as any)
-  const contractKind = collection?.contractKind?.toUpperCase()
+
+  const hasSecurityConfig =
+    collection?.securityConfig &&
+    Object.values(collection.securityConfig).some(Boolean)
+  const contractKind = `${collection?.contractKind?.toUpperCase()}${
+    hasSecurityConfig ? 'C' : ''
+  }`
+
+  const collectionChain =
+    supportedChains.find(
+      (chain) => router.query?.chain === chain.routePrefix
+    ) || DefaultChain
+
   let creatorRoyalties = collection?.royalties?.bps
     ? collection?.royalties?.bps * 0.01
     : 0
-  let chain = titleCase(router.query.chain as string)
+  let chainName = collectionChain?.name
 
   let rareTokenQuery: Parameters<typeof useDynamicTokens>['0'] = {
     limit: 8,
@@ -56,9 +71,12 @@ export const CollectionDetails: FC<Props> = ({
     sortDirection: 'asc',
   }
 
-  const isOverflowed =
-    descriptionRef?.current?.scrollHeight >
-    descriptionRef?.current?.clientHeight
+  useEffect(() => {
+    setIsOverflowed(
+      descriptionRef?.current?.scrollHeight >
+        descriptionRef?.current?.clientHeight
+    )
+  }, [isOverflowed, descriptionRef])
 
   const { data: rareTokens } = useDynamicTokens(rareTokenQuery)
 
@@ -156,7 +174,7 @@ export const CollectionDetails: FC<Props> = ({
               value: truncateAddress(collection?.primaryContract || ''),
             },
             { label: 'Token Standard', value: contractKind },
-            { label: 'Chain', value: chain },
+            { label: 'Chain', value: chainName },
             {
               label: 'Creator Earning',
               value: creatorRoyalties + '%',
