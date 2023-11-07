@@ -19,6 +19,10 @@ export default function (
     chainId !== undefined
       ? client?.chains.find((chain) => chain.id === chainId)
       : client?.currentChain()
+  // let URLs = URL
+  // if (typeof URL == 'undefined') {
+  //   URLs = require('node:url')
+  // }
 
   const path = new URL(`${chain?.baseApiUrl}/collections/top-selling/v2`)
 

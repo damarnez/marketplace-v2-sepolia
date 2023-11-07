@@ -212,12 +212,14 @@ const IndexPage: NextPage<Props> = ({ assetId, ssr }) => {
   }, [isSmallDevice])
 
   useEffect(() => {
-    const updatedUrl = new URL(`${window.location.origin}${router.asPath}`)
-    updatedUrl.searchParams.set('tab', tabValue)
-    router.replace(updatedUrl, undefined, {
-      shallow: true,
-    })
-  }, [tabValue])
+    if (typeof window !== 'undefined') {
+      const updatedUrl = new URL(`${window.location.origin}${router.asPath}`)
+      updatedUrl.searchParams.set('tab', tabValue)
+      router.replace(updatedUrl, undefined, {
+        shallow: true,
+      })
+    }
+  }, [tabValue && typeof window !== 'undefined'])
 
   const pageTitle = token?.token?.name
     ? token.token.name

@@ -1,4 +1,4 @@
-import { DefaultChain } from './.cache/chains.mjs'
+ 
 import { withSentryConfig } from '@sentry/nextjs'
 
 const sentryWebpackPluginOptions = {
@@ -33,7 +33,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: `/${DefaultChain.routePrefix}`,
+        destination: `/ethereum`,
         permanent: false,
       },
       {
@@ -48,7 +48,7 @@ const nextConfig = {
       },
       {
         source: '/collection-rankings',
-        destination: `/${DefaultChain.routePrefix}/collection-rankings`,
+        destination: `/ethereum/collection-rankings`,
         permanent: true,
       },
 

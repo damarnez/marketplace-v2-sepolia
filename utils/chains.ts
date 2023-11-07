@@ -3,7 +3,7 @@ import wrappedContracts from './wrappedContracts'
 import { zeroAddress } from 'viem'
 import {
   arbitrum,
-  mainnet,
+  sepolia,
   polygon,
   optimism,
   Chain,
@@ -152,15 +152,8 @@ const nativeCurrencyBase = {
   coinGeckoId: 'ethereum',
 }
 
-const usdcCurrencyBase = {
-  contract: '',
-  symbol: 'USDC',
-  decimals: 6,
-  coinGeckoId: 'usd-coin',
-}
-
 export const DefaultChain: ReservoirChain = {
-  ...mainnet,
+  ...sepolia,
   // Any url to display the logo of the chain in light mode
   lightIconUrl: '/icons/eth-icon-dark.svg',
   // Any url to display the logo of the chain in dark mode
@@ -168,7 +161,7 @@ export const DefaultChain: ReservoirChain = {
   // The base url of the reservoir api, this is used in the app when
   // directly interacting with the reservoir indexer servers (in the api proxy for example)
   // or when prefetching server side rendered data
-  reservoirBaseUrl: 'https://api.reservoir.tools',
+  reservoirBaseUrl: 'https://api-sepolia.reservoir.tools',
   // Used on the client side portions of the marketplace that need an api key added
   // Prevents the api key from being leaked in the clientside requests
   // If you'd like to disable proxying you can just change the proxyApi to the reservoirBaseUrl
@@ -186,170 +179,8 @@ export const DefaultChain: ReservoirChain = {
   collectionSetId: process.env.NEXT_PUBLIC_ETH_COLLECTION_SET_ID,
   community: process.env.NEXT_PUBLIC_ETH_COMMUNITY,
   wssUrl: 'wss://ws.reservoir.tools',
-  listingCurrencies: [
-    nativeCurrencyBase,
-    {
-      ...usdcCurrencyBase,
-      contract: usdcContracts[mainnet.id],
-    },
-  ],
+  listingCurrencies: [nativeCurrencyBase],
   oracleBidsEnabled: true,
 }
 
-export default [
-  DefaultChain,
-  {
-    ...polygon,
-    lightIconUrl: '/icons/polygon-icon-dark.svg',
-    darkIconUrl: '/icons/polygon-icon-light.svg',
-    reservoirBaseUrl: 'https://api-polygon.reservoir.tools',
-    proxyApi: '/api/reservoir/polygon',
-    routePrefix: 'polygon',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'matic-network',
-    collectionSetId: process.env.NEXT_PUBLIC_POLYGON_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_POLYGON_COMMUNITY,
-
-    wssUrl: 'wss://ws-polygon.reservoir.tools',
-    listingCurrencies: [
-      {
-        ...nativeCurrencyBase,
-        symbol: 'MATIC',
-        coinGeckoId: 'matic-network',
-      },
-      {
-        ...usdcCurrencyBase,
-        contract: usdcContracts[polygon.id],
-      },
-      {
-        contract: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-        symbol: 'WETH',
-        decimals: 18,
-        coinGeckoId: 'weth',
-      },
-    ],
-    oracleBidsEnabled: true,
-  },
-  {
-    ...arbitrum,
-    name: 'Arbitrum',
-    lightIconUrl: '/icons/arbitrum-icon-dark.svg',
-    darkIconUrl: '/icons/arbitrum-icon-light.svg',
-    reservoirBaseUrl: 'https://api-arbitrum.reservoir.tools',
-    proxyApi: '/api/reservoir/arbitrum',
-    routePrefix: 'arbitrum',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'arbitrum-iou',
-    collectionSetId: process.env.NEXT_PUBLIC_ARBITRUM_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_ARBITRUM_COMMUNITY,
-    wssUrl: 'wss://ws-arbitrum.reservoir.tools',
-    listingCurrencies: [
-      { ...nativeCurrencyBase, coinGeckoId: 'arbitrum-iou' },
-      {
-        ...usdcCurrencyBase,
-        contract: usdcContracts[arbitrum.id],
-      },
-    ],
-  },
-  {
-    ...arbitrumNova,
-    lightIconUrl: '/icons/arbitrum-nova-icon-dark.svg',
-    darkIconUrl: '/icons/arbitrum-nova-icon-light.svg',
-    reservoirBaseUrl: 'https://api-arbitrum-nova.reservoir.tools',
-    proxyApi: '/api/reservoir/arbitrum-nova',
-    routePrefix: 'arbitrum-nova',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'ethereum',
-    collectionSetId: process.env.NEXT_PUBLIC_ARBITRUM_NOVA_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_ARBITRUM_NOVA_COMMUNITY,
-  },
-  {
-    ...optimism,
-    name: 'Optimism',
-    lightIconUrl: '/icons/optimism-icon-dark.svg',
-    darkIconUrl: '/icons/optimism-icon-light.svg',
-    reservoirBaseUrl: 'https://api-optimism.reservoir.tools',
-    proxyApi: '/api/reservoir/optimism',
-    routePrefix: 'optimism',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'optimism',
-    collectionSetId: process.env.NEXT_PUBLIC_OPTIMISM_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_OPTIMISM_COMMUNITY,
-    wssUrl: 'wss://ws-optimism.reservoir.tools',
-    listingCurrencies: [
-      { ...nativeCurrencyBase, coinGeckoId: 'optimism' },
-      {
-        ...usdcCurrencyBase,
-        contract: usdcContracts[optimism.id],
-      },
-    ],
-  },
-  {
-    ...zora,
-    name: 'Zora',
-    lightIconUrl: '/icons/zora-icon-dark.svg',
-    darkIconUrl: '/icons/zora-icon-light.svg',
-    reservoirBaseUrl: 'https://api-zora.reservoir.tools',
-    proxyApi: '/api/reservoir/zora',
-    routePrefix: 'zora',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'ethereum',
-  },
-  {
-    ...bsc,
-    lightIconUrl: '/icons/bsc-icon-dark.svg',
-    darkIconUrl: '/icons/bsc-icon-light.svg',
-    reservoirBaseUrl: 'https://api-bsc.reservoir.tools',
-    proxyApi: '/api/reservoir/bsc',
-    routePrefix: 'bsc',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'binancecoin',
-    collectionSetId: process.env.NEXT_PUBLIC_BSC_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_BSC_COMMUNITY,
-    wssUrl: 'wss://ws-bsc.reservoir.tools',
-    listingCurrencies: [
-      { ...nativeCurrencyBase, coinGeckoId: 'binancecoin' },
-      {
-        ...usdcCurrencyBase,
-        contract: usdcContracts[bsc.id],
-      },
-    ],
-  },
-  {
-    ...avalanche,
-    lightIconUrl: '/icons/avalanche-icon-dark.svg',
-    darkIconUrl: '/icons/avalanche-icon-light.svg',
-    reservoirBaseUrl: 'https://api-avalanche.reservoir.tools',
-    proxyApi: '/api/reservoir/avalanche',
-    routePrefix: 'avalanche',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'avalanche-2',
-    collectionSetId: process.env.NEXT_PUBLIC_AVALANCHE_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_AVALANCHE_COMMUNITY,
-  },
-  {
-    ...base,
-    lightIconUrl: '/icons/base-icon-dark.svg',
-    darkIconUrl: '/icons/base-icon-light.svg',
-    reservoirBaseUrl: 'https://api-base.reservoir.tools',
-    proxyApi: '/api/reservoir/base',
-    routePrefix: 'base',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'ethereum',
-    collectionSetId: process.env.NEXT_PUBLIC_BASE_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_BASE_COMMUNITY,
-  },
-  {
-    ...linea,
-    lightIconUrl: '/icons/linea-icon-dark.svg',
-    darkIconUrl: '/icons/linea-icon-light.svg',
-    reservoirBaseUrl: 'https://api-linea.reservoir.tools',
-    proxyApi: '/api/reservoir/linea',
-
-    routePrefix: 'linea',
-    apiKey: process.env.RESERVOIR_API_KEY,
-    coingeckoId: 'ethereum',
-    collectionSetId: process.env.NEXT_PUBLIC_LINEA_COLLECTION_SET_ID,
-    community: process.env.NEXT_PUBLIC_LINEA_COMMUNITY,
-  },
-] as ReservoirChain[]
+export default [DefaultChain] as ReservoirChain[]

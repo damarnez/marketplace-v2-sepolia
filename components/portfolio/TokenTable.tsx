@@ -134,11 +134,13 @@ export const TokenTable = forwardRef<TokenTableRef, Props>(
     })
 
     useEffect(() => {
-      mutate()
-      return () => {
-        setSize(1)
+      if (typeof window !== 'undefined' && typeof setSize !== 'undefined') {
+        mutate()
+        return () => {
+          setSize(1) 
+        }
       }
-    }, [])
+    }, [typeof window !== 'undefined'])
 
     useEffect(() => {
       const isVisible = !!loadMoreObserver?.isIntersecting

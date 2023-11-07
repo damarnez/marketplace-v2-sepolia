@@ -60,7 +60,7 @@ const IndexPage: NextPage = () => {
     : accountAddress
   const [tabValue, setTabValue] = useState('items')
   const [itemView, setItemView] = useState<ItemView>('list')
-
+  const [loading, setLoading] = useState(true)
   const [activityTypes, setActivityTypes] = useState<ActivityTypes>(['sale'])
   const [activityFiltersOpen, setActivityFiltersOpen] = useState(true)
   const [tokenFiltersOpen, setTokenFiltersOpen] = useState(false)
@@ -74,6 +74,12 @@ const IndexPage: NextPage = () => {
   const { addToast } = useContext(ToastContext)
   const isOwner =
     !router.query.address || router.query.address[0] === accountAddress
+
+  useEffect(() => {
+    setLoading(false);
+  },[typeof window !== 'undefined'])
+
+ 
 
   const {
     avatar: ensAvatar,
@@ -162,7 +168,7 @@ const IndexPage: NextPage = () => {
     router.query.tab = tabValue
     router.push(router, undefined, { shallow: true })
   }, [tabValue])
-
+  if(loading == true) return <>Loading</>
   if (!isMounted) {
     return null
   }
